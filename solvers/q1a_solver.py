@@ -2,11 +2,12 @@
 # DO NOT MODIFY BEGIN #
 #---------------------#
 
-import heapq
 import logging
 
 import util
 from problems.q1a_problem import q1a_problem
+
+import heapq
 
 def q1a_solver(problem: q1a_problem):
     astarData = astar_initialise(problem)
