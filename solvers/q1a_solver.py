@@ -35,18 +35,15 @@ def astar_initialise(problem: q1a_problem):
     # astarData.x = 'stuff'
     # astarData.y = 123
     #return astarData
+    initial_cost = 0
+    initial_heuristic = astar_heuristic(start_state, problem)
+    start_state = problem.getStartState()
+    
+    # Create an instance of PriorityQueue
     astarData = AStarData()
     
-    start_state = problem.getStartState()
-    goal_state = problem.goalState
-    
-    # Initialize the open list with the start state
-    initial_cost = 0
-    initial_heuristic = astar_heuristic(start_state, goal_state)
-    astarData.open_list.push((initial_cost + initial_heuristic, initial_cost, start_state))
-    
-    astarData.came_from[start_state] = None
-    astarData.cost_so_far[start_state] = initial_cost
+    # Push the initial state onto the priority queue with priority being initial_cost + initial_heuristic
+    astarData.open_list.push(start_state, initial_cost + initial_heuristic)
     
     return astarData
 
