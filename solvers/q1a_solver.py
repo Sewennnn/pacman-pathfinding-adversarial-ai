@@ -7,8 +7,6 @@ import logging
 import util
 from problems.q1a_problem import q1a_problem
 
-import heapq
-
 def q1a_solver(problem: q1a_problem):
     astarData = astar_initialise(problem)
     num_expansions = 0
@@ -45,7 +43,7 @@ def astar_initialise(problem: q1a_problem):
     # Initialize the open list with the start state
     initial_cost = 0
     initial_heuristic = astar_heuristic(start_state, goal_state)
-    heapq.heappush(astarData.open_list, (initial_cost + initial_heuristic, initial_cost, start_state))
+    util.PriorityQueue.push(astarData.open_list, (initial_cost + initial_heuristic, initial_cost, start_state))
     
     astarData.came_from[start_state] = None
     astarData.cost_so_far[start_state] = initial_cost
@@ -58,7 +56,7 @@ def astar_loop_body(problem: q1a_problem, astarData: AStarData):
     if not astarData.open_list:
         return True, None  # No solution found
     
-    _, current_cost, current = heapq.heappop(astarData.open_list)
+    _, current_cost, current = util.PriorityQueue.pop(astarData.open_list)
     
     if problem.isGoalState(current):
         # Goal found, reconstruct path
@@ -82,7 +80,7 @@ def astar_loop_body(problem: q1a_problem, astarData: AStarData):
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
             priority = new_cost + astar_heuristic(successor, problem.goalState)
-            heapq.heappush(astarData.open_list, (priority, new_cost, successor))
+            util.PriorityQueue.push(astarData.open_list, (priority, new_cost, successor))
             astarData.came_from[successor] = current
     
     return False, None
