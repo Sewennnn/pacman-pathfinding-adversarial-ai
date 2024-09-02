@@ -24,7 +24,7 @@ def q1a_solver(problem: q1a_problem):
 class AStarData:
     # YOUR CODE HERE
     def __init__(self):
-        self.open_list = []  # Priority queue (min-heap) for open nodes
+        self.open_list = util.PriorityQueue()  # Use your utility's priority queue
         self.closed_list = set()  # Set for closed nodes
         self.came_from = {}  # Dictionary to reconstruct the path
         self.cost_so_far = {}  # Dictionary to keep track of costs
@@ -43,7 +43,7 @@ def astar_initialise(problem: q1a_problem):
     # Initialize the open list with the start state
     initial_cost = 0
     initial_heuristic = astar_heuristic(start_state, goal_state)
-    util.PriorityQueue.push(astarData.open_list, (initial_cost + initial_heuristic, initial_cost, start_state))
+    astarData.open_list.push((initial_cost + initial_heuristic, initial_cost, start_state))
     
     astarData.came_from[start_state] = None
     astarData.cost_so_far[start_state] = initial_cost
@@ -53,10 +53,10 @@ def astar_initialise(problem: q1a_problem):
 def astar_loop_body(problem: q1a_problem, astarData: AStarData):
     # YOUR CODE HERE
     #util.raiseNotDefined()  # Delete this line
-    if not astarData.open_list:
+    if astarData.open_list.is_empty():
         return True, None  # No solution found
     
-    _, current_cost, current = util.PriorityQueue.pop(astarData.open_list)
+    _, current_cost, current = astarData.open_list.pop()
     
     if problem.isGoalState(current):
         # Goal found, reconstruct path
@@ -80,14 +80,13 @@ def astar_loop_body(problem: q1a_problem, astarData: AStarData):
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
             priority = new_cost + astar_heuristic(successor, problem.goalState)
-            util.PriorityQueue.push(astarData.open_list, (priority, new_cost, successor))
+            astarData.open_list.push((priority, new_cost, successor))
             astarData.came_from[successor] = current
     
     return False, None
+    
 
 def astar_heuristic(current, goal):
     # YOUR CODE HERE
     #return 0
-    x1, y1 = current
-    x2, y2 = goal
-    return abs(x1 - x2) + abs(y1 - y2)  # Manhattan distance
+    return util.manhattanDistance(current, goal)
