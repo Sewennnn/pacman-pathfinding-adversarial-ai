@@ -30,17 +30,19 @@ class q1a_problem:
         goal: A position in the gameState
         """
         self.startingGameState: GameState = gameState
+        self.startState = gameState.getPacmanPosition()
+        self.goalState = gameState.getFood().asList()[0]
 
     @log_function
     def getStartState(self):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.startState
 
 
     @log_function
     def isGoalState(self, state):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return state == self.goalState
 
     @log_function
     def getSuccessors(self, state):
@@ -56,6 +58,17 @@ class q1a_problem:
         """
         # ------------------------------------------
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        successors = []
+        for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            x, y = state
+            dx, dy = Actions.directionToVector(direction)
+            next_x, next_y = int(x + dx), int(y + dy)
+            if self.startingGameState.hasWall(next_x, next_y):
+                continue
+            next_state = (next_x, next_y)
+            action = direction
+            step_cost = 1
+            successors.append((next_state, action, step_cost))
+        return successors
 
 
