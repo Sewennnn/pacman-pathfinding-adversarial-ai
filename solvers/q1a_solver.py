@@ -53,7 +53,7 @@ def astar_initialise(problem: q1a_problem):
 def astar_loop_body(problem: q1a_problem, astarData: AStarData):
     # YOUR CODE HERE
     #util.raiseNotDefined()  # Delete this line
-    if astarData.open_list.is_empty():
+    if astarData.open_list.isEmpty():
         return True, None  # No solution found
     
     _, current_cost, current = astarData.open_list.pop()
