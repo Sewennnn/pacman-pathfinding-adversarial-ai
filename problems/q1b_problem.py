@@ -28,7 +28,7 @@ class q1b_problem:
         self.startingGameState: GameState = gameState
         self.startState = gameState.getPacmanPosition()
         self.goalStates = gameState.getFood().asList()
-        print("all food positions", self.goalStates)
+        #print("all food positions", self.goalStates)
 
     @log_function
     def getStartState(self):
@@ -63,12 +63,10 @@ class q1b_problem:
             
             dx, dy = Actions.directionToVector(direction)
             next_x, next_y = int(x + dx), int(y + dy)
-            if self.startingGameState.hasWall(next_x, next_y):
-                continue
-            next_state = (next_x, next_y)
-            action = direction
-            #print("direction", direction)
-            step_cost = 1
-            successors.append((next_state, action, step_cost))
+            if not self.startingGameState.hasWall(next_x, next_y):  # Only generate successors if no wall
+                next_state = (next_x, next_y)
+                action = direction
+                step_cost = 1
+                successors.append((next_state, action, step_cost))
         return successors
 
