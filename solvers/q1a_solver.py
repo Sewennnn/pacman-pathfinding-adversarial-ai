@@ -75,9 +75,11 @@ def astar_loop_body(problem: q1a_problem, astarData: AStarData):
         return True, path
     
     astarData.closed_list.add(current)
-    print(current)
+    print("current", current)
+    #print(current)
     
     for successor, action, step_cost in problem.getSuccessors(current):
+        print("step cost", step_cost)
         if successor in astarData.closed_list:
             continue
         

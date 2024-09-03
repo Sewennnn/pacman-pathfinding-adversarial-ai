@@ -67,7 +67,7 @@ class q1b_problem:
                 continue
             next_state = (next_x, next_y)
             action = direction
-            print("direction", direction)
+            #print("direction", direction)
             step_cost = 1
             successors.append((next_state, action, step_cost))
         return successors

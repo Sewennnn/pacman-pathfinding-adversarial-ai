@@ -33,25 +33,26 @@ def astar_initialise(problem: q1b_problem):
     # YOUR CODE HERE
     astarData = AStarData()
     
-   
     start_state = problem.getStartState()
     goalState = problem.goalStates
     
-   
     initial_cost = 0
     initial_heuristic = astar_heuristic(start_state, goalState)
     
     astarData.pqueue.push(start_state, initial_heuristic)
     astarData.cost_so_far[start_state] = initial_cost
     astarData.came_from[start_state] = None
-    #print("start state", start_state)
     
     return astarData
 
 def astar_loop_body(problem: q1b_problem, astarData: AStarData):
     # YOUR CODE HERE
+    
+    #print(current)
+    #print("current", current)
+    
     if astarData.pqueue.isEmpty():
-        return True, None  
+        return True, None  # No solution if priority queue is empty
     
     current = astarData.pqueue.pop()
     
@@ -69,20 +70,16 @@ def astar_loop_body(problem: q1b_problem, astarData: AStarData):
     for successor, action, step_cost in problem.getSuccessors(current):
         if successor in astarData.closed_list:
             continue
-        
+
         new_cost = astarData.cost_so_far[current] + step_cost
         
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
-            
-            # Compute heuristic for successor
             heuristic = astar_heuristic(successor, problem.goalStates)
+            priority = new_cost + heuristic  # f(n) = g(n) + h(n)
             
-            # Calculate priority with tie-breaking
-            priority = new_cost + heuristic - new_cost * 1e-6  # Prefer smaller g values
-            
-            astarData.pqueue.push(successor, priority)
-            astarData.came_from[successor] = (current, action)
+            astarData.pqueue.push(successor, (priority, -new_cost))
+            astarData.came_from[successor] = current, action
     
     return False, None
 
