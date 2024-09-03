@@ -48,9 +48,6 @@ def astar_initialise(problem: q1b_problem):
 def astar_loop_body(problem: q1b_problem, astarData: AStarData):
     # YOUR CODE HERE
     
-    #print(current)
-    #print("current", current)
-    
     if astarData.pqueue.isEmpty():
         return True, None  # No solution if priority queue is empty
     
@@ -78,7 +75,7 @@ def astar_loop_body(problem: q1b_problem, astarData: AStarData):
             heuristic = astar_heuristic(successor, problem.goalStates)
             priority = new_cost + heuristic  # f(n) = g(n) + h(n)
             
-            astarData.pqueue.push(successor, (priority, -new_cost))
+            astarData.pqueue.push(successor, (priority, new_cost))
             astarData.came_from[successor] = current, action
     
     return False, None
