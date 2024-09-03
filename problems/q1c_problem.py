@@ -26,16 +26,19 @@ class q1c_problem:
         goal: A position in the gameState
         """
         self.startingGameState: GameState = gameState
+        self.startState = (gameState.getPacmanPosition(), gameState.getFood().asList())
+        self.goalState = gameState.getFood().asList()
 
     @log_function
     def getStartState(self):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.startState
 
     @log_function
     def isGoalState(self, state):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        pacman_position, remaining_dots = state
+        return len(remaining_dots) == 0
 
     @log_function
     def getSuccessors(self, state):
@@ -50,5 +53,19 @@ class q1c_problem:
          cost of expanding to that successor
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        pacman_position, remaining_dots = state
+        successors = []
+
+        x, y = pacman_position
+        for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            dx, dy = Actions.directionToVector(direction)
+            next_x, next_y = int(x + dx), int(y + dy)
+            if not self.startingGameState.hasWall(next_x, next_y):
+                next_position = (next_x, next_y)
+                next_dots = tuple(dot for dot in remaining_dots if dot != next_position)
+                action = direction
+                step_cost = 1
+                successors.append(((next_position, next_dots), action, step_cost))
+
+        return successors
 
