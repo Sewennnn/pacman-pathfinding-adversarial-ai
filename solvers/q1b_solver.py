@@ -55,38 +55,39 @@ def astar_loop_body(problem: q1b_problem, astarData: AStarData):
     
     current = astarData.pqueue.pop()
     
-    
     if problem.isGoalState(current):
-       
         path = []
         while astarData.came_from[current] is not None:
             prev_state, action = astarData.came_from[current]
-         
-            # dx, dy = current[0] - prev_state[0], current[1] - prev_state[1]
-            # action = directionFromDelta(dx, dy)
             path.append(action)
             current = prev_state
         path.reverse()
         return True, path
     
     astarData.closed_list.add(current)
-    print(current)
     
     for successor, action, step_cost in problem.getSuccessors(current):
         if successor in astarData.closed_list:
             continue
         
         new_cost = astarData.cost_so_far[current] + step_cost
+        
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
-            priority = new_cost + astar_heuristic(successor, problem.goalStates)
+            
+            # Compute heuristic for successor
+            heuristic = astar_heuristic(successor, problem.goalStates)
+            
+            # Calculate priority with tie-breaking
+            priority = new_cost + heuristic - new_cost * 1e-6  # Prefer smaller g values
+            
             astarData.pqueue.push(successor, priority)
-            astarData.came_from[successor] = current, action
+            astarData.came_from[successor] = (current, action)
     
     return False, None
 
 def astar_heuristic(current, goals):
     # YOUR CODE HERE
-    return min(util.manhattanDistance(current, goal) for goal in goals)
+    return min(util.manhattanDistance(current, goal) for goal in goals) 
 
 
