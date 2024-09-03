@@ -73,7 +73,7 @@ def astar_loop_body(problem: q1b_problem, astarData: AStarData):
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
             heuristic = astar_heuristic(successor, problem.goalStates)
-            priority = new_cost + heuristic 
+            priority = new_cost + heuristic * 1.5
             
             astarData.pqueue.push(successor, (priority, new_cost))
             astarData.came_from[successor] = current, action
@@ -83,20 +83,20 @@ def astar_loop_body(problem: q1b_problem, astarData: AStarData):
 def astar_heuristic(current, goals):
     # YOUR CODE HERE
 
-    #return min(util.manhattanDistance(current, goal) for goal in goals) 
-    # Initialize min_distance to a very large number
-    min_distance = float('inf')
+    return min(util.manhattanDistance(current, goal) for goal in goals) 
+    # # Initialize min_distance to a very large number
+    # min_distance = float('inf')
     
-    # Iterate over all goals to find the minimum distance
-    for goal in goals:
-        # Calculate the Manhattan distance from current to this goal
-        distance = util.manhattanDistance(current, goal)
+    # # Iterate over all goals to find the minimum distance
+    # for goal in goals:
+    #     # Calculate the Manhattan distance from current to this goal
+    #     distance = util.manhattanDistance(current, goal)
         
-        # Update min_distance if a smaller distance is found
-        if distance < min_distance:
-            min_distance = distance
+    #     # Update min_distance if a smaller distance is found
+    #     if distance < min_distance:
+    #         min_distance = distance
     
-    # Return the smallest distance found
-    return min_distance * 1.5
+    # # Return the smallest distance found
+    # return min_distance * 1.5
 
 
