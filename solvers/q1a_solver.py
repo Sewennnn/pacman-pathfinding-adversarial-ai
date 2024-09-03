@@ -24,10 +24,10 @@ def q1a_solver(problem: q1a_problem):
 class AStarData:
     # YOUR CODE HERE
     def __init__(self):
-        self.pqueue = util.PriorityQueue()  # Priority queue for open list
-        self.closed_list = set()  # Set of visited states
-        self.cost_so_far = {}  # Cost to reach each state
-        self.came_from = {}  # Map to reconstruct the path
+        self.pqueue = util.PriorityQueue()  
+        self.closed_list = set() 
+        self.cost_so_far = {}  
+        self.came_from = {}  
 
         
 
@@ -50,19 +50,6 @@ def astar_initialise(problem: q1a_problem):
     
     return astarData
     
-    
-    
-    # # Compute the initial cost and heuristic
-    # initial_cost = 0
-    # initial_heuristic = astar_heuristic(start_state, problem.goalState())
-    
-    # # Initialize AStarData and push the initial state onto the priority queue
-    # astarData = AStarData()
-    # astarData.open_list.push(start_state, initial_heuristic)  # Use heuristic as initial priority
-    # astarData.cost_so_far[start_state] = initial_cost
-    # astarData.came_from[start_state] = None
-    
-    # return astarData
 
 def astar_loop_body(problem: q1a_problem, astarData: AStarData):
     # YOUR CODE HERE
