@@ -80,9 +80,20 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(state, goals):
     pacman_position, remaining_food = state
-    rows = len(set([f[0] for f in remaining_food]))  
-    cols = len(set([f[1] for f in remaining_food]))  
-    return rows + cols
+
+    if len(remaining_food) > 0:
+        return 1
+    
+    return 0
+#     rows = len(set([f[0] for f in remaining_food]))  
+#     cols = len(set([f[1] for f in remaining_food]))  
+#     return rows + cols
+
+
+
+# if len(state.getFood().asList()) > 0:
+#         return 1
+#     return 0
     
     
 
