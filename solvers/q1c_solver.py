@@ -80,6 +80,26 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(current, goals):
     # YOUR CODE HERE
-    pacman_position, _ = current  
-    return min(util.manhattanDistance(pacman_position, goal) for goal in goals)
+    # pacman_position, _ = current  
+    # return min(util.manhattanDistance(pacman_position, goal) for goal in goals)
     
+    pacman_position, remaining_food = current
+    
+    if not remaining_food:
+        return 0  
+
+    min_distance_to_food = min(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+     
+    max_distance_to_food = max(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+    
+    cluster_penalty = 0
+    if len(remaining_food) > 1:
+        cluster_penalty = max(util.manhattanDistance(f1, f2) for f1 in remaining_food for f2 in remaining_food if f1 != f2)
+    
+    distance_threshold = 5  
+    if min_distance_to_food > distance_threshold:
+        timeout_penalty = min_distance_to_food * 2
+    else:
+        timeout_penalty = 0
+    
+    return min_distance_to_food + 0.5 * cluster_penalty + max_distance_to_food + timeout_penalty
