@@ -78,8 +78,12 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
     
     return False, None
 
-def astar_heuristic(current, goals):
-    # YOUR CODE HERE
-    pacman_position, _ = current  
-    return min(util.manhattanDistance(pacman_position, goal) for goal in goals)
-   
+def astar_heuristic(state, goals):
+    pacman_position, remaining_food = state
+    rows = len(set([f[0] for f in remaining_food]))  # Unique rows with food
+    cols = len(set([f[1] for f in remaining_food]))  # Unique columns with food
+    return min(rows, cols)
+    
+    
+
+
