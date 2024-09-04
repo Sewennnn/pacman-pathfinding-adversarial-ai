@@ -84,13 +84,50 @@ def astar_heuristic(current, goals):
     # return min(util.manhattanDistance(pacman_position, goal) for goal in goals)
     
     pacman_position, remaining_food = current
-    
-    # If there is no remaining food, we have reached the goal state
-    if not remaining_food:
-        return 0  
 
-    # Focus on the closest food to Pacman
-    closest_food_distance = min(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+    if not remaining_food:
+        return 0
+
+    # Calculate all pairwise distances
+    distances = {}
+    for i in range(len(remaining_food)):
+        for j in range(i + 1, len(remaining_food)):
+            food1 = remaining_food[i]
+            food2 = remaining_food[j]
+            dist = util.manhattanDistance(food1, food2)
+            if food1 not in distances:
+                distances[food1] = []
+            if food2 not in distances:
+                distances[food2] = []
+            distances[food1].append((food2, dist))
+            distances[food2].append((food1, dist))
+
+    # Helper function to calculate the MST cost using a list-based approach
+    def mst_cost(nodes, edges):
+        if len(nodes) == 1:
+            return 0
+        mst_cost = 0
+        in_mst = {node: False for node in nodes}
+        min_edges = [(0, nodes[0])]  # Start with an arbitrary node
+        while min_edges:
+            cost, node = min_edges.pop(0)
+            if in_mst[node]:
+                continue
+            in_mst[node] = True
+            mst_cost += cost
+            for neighbor, edge_cost in edges[node]:
+                if not in_mst[neighbor]:
+                    min_edges.append((edge_cost, neighbor))
+                    min_edges.sort()  # Sort edges to get the minimum cost edge next
+        return mst_cost
+
+    # Get the list of food nodes
+    food_nodes = list(remaining_food)
     
-    # Since Greedy BFS only cares about the immediate next step, we avoid adding extra penalties
-    return closest_food_distance
+    # Calculate MST cost
+    mst_cost_value = mst_cost(food_nodes, distances)
+
+    # Add the cost of reaching the nearest food dot
+    min_distance_to_food = min(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+
+    return mst_cost_value + min_distance_to_food
