@@ -82,21 +82,5 @@ def astar_loop_body(problem: q1b_problem, astarData: AStarData):
 
 def astar_heuristic(current, goals):
     # YOUR CODE HERE
-
     return min(util.manhattanDistance(current, goal) for goal in goals) 
-    # # Initialize min_distance to a very large number
-    # min_distance = float('inf')
-    
-    # # Iterate over all goals to find the minimum distance
-    # for goal in goals:
-    #     # Calculate the Manhattan distance from current to this goal
-    #     distance = util.manhattanDistance(current, goal)
-        
-    #     # Update min_distance if a smaller distance is found
-    #     if distance < min_distance:
-    #         min_distance = distance
-    
-    # # Return the smallest distance found
-    # return min_distance * 1.5
-
-
+   

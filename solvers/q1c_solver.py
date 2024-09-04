@@ -13,7 +13,14 @@ from problems.q1c_problem import q1c_problem
 
 def q1c_solver(problem: q1c_problem):
     # YOUR CODE HERE
-    pass
+    astarData = astar_initialise(problem)
+    num_expansions = 0
+    terminate = False
+    while not terminate:
+        num_expansions += 1
+        terminate, result = astar_loop_body(problem, astarData)
+    print(f'Number of node expansions: {num_expansions}')
+    return result
 
 class AStarData:
     def __init__(self):
@@ -31,11 +38,10 @@ def astar_initialise(problem: q1c_problem):
     initial_heuristic = astar_heuristic(start_state, goalState)
     
     astarData.pqueue.push(start_state, (initial_heuristic, initial_cost))
-    astarData.cost_so_far[start_state] = initial_cost
+    astarData.cost_so_far[start_state] = initial_cost  # No longer unhashable
     astarData.came_from[start_state] = None
     
     return astarData
-
 
 def astar_loop_body(problem: q1c_problem, astarData: AStarData):
     # YOUR CODE HERE
@@ -64,7 +70,7 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
         
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
-            heuristic = astar_heuristic(successor, problem.goalStates)
+            heuristic = astar_heuristic(successor, problem.goalState)
             priority = new_cost + heuristic 
             
             astarData.pqueue.push(successor, (priority, new_cost))
@@ -74,4 +80,6 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(current, goals):
     # YOUR CODE HERE
-    return min(util.manhattanDistance(current, goal) for goal in goals) 
+    pacman_position, _ = current  
+    return min(util.manhattanDistance(pacman_position, goal) for goal in goals)
+    
