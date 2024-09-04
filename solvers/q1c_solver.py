@@ -98,7 +98,7 @@ def astar_heuristic(current, goals):
     
     distance_threshold = 5  
     if min_distance_to_food > distance_threshold:
-        timeout_penalty = min_distance_to_food * 2
+        timeout_penalty = min_distance_to_food * 4
     else:
         timeout_penalty = 0
     
