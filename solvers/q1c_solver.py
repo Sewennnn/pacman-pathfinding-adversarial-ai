@@ -80,49 +80,6 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(current, goals):
     # YOUR CODE HERE
-    # pacman_position, _ = current  
-    # return min(util.manhattanDistance(pacman_position, goal) for goal in goals)
-    import heapq
-    
-    pacman_position, food_grid = current
-    food_positions = food_grid # Get the list of food positions
-
-    if not food_positions:
-        return 0  # No food left to collect
-
+    pacman_position, _ = current  
+    return min(util.manhattanDistance(pacman_position, goal) for goal in goals)
    
-
-    def compute_mst_cost(food_positions):
-        if len(food_positions) == 1:
-            return 0
-
-        edges = {pos: [] for pos in food_positions}
-        for i in range(len(food_positions)):
-            for j in range(i + 1, len(food_positions)):
-                f1 = food_positions[i]
-                f2 = food_positions[j]
-                distance = util.manhattanDistance(f1, f2)
-                edges[f1].append((f2, distance))
-                edges[f2].append((f1, distance))
-
-        mst_cost = 0
-        visited = set()
-        min_heap = [(0, food_positions[0])]  # Start with an arbitrary node
-
-        while min_heap:
-            cost, node = heapq.heappop(min_heap)
-            if node in visited:
-                continue
-            visited.add(node)
-            mst_cost += cost
-
-            for neighbor, edge_cost in edges[node]:
-                if neighbor not in visited:
-                    heapq.heappush(min_heap, (edge_cost, neighbor))
-
-        return mst_cost
-
-    mst_cost_value = compute_mst_cost(food_positions)
-    min_distance_from_pacman = min(util.manhattanDistance(pacman_position, food) for food in food_positions)
-
-    return mst_cost_value + min_distance_from_pacman
