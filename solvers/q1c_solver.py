@@ -85,21 +85,12 @@ def astar_heuristic(current, goals):
     
     pacman_position, remaining_food = current
     
+    # If there is no remaining food, we have reached the goal state
     if not remaining_food:
         return 0  
 
-    min_distance_to_food = min(util.manhattanDistance(pacman_position, food) for food in remaining_food)
-     
-    max_distance_to_food = max(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+    # Focus on the closest food to Pacman
+    closest_food_distance = min(util.manhattanDistance(pacman_position, food) for food in remaining_food)
     
-    cluster_penalty = 0
-    if len(remaining_food) > 1:
-        cluster_penalty = max(util.manhattanDistance(f1, f2) for f1 in remaining_food for f2 in remaining_food if f1 != f2)
-    
-    distance_threshold = 5  
-    if min_distance_to_food > distance_threshold:
-        timeout_penalty = min_distance_to_food * 4
-    else:
-        timeout_penalty = 0
-    
-    return min_distance_to_food + 0.5 * cluster_penalty + max_distance_to_food + timeout_penalty
+    # Since Greedy BFS only cares about the immediate next step, we avoid adding extra penalties
+    return closest_food_distance
