@@ -26,7 +26,7 @@ class q1c_problem:
         goal: A position in the gameState
         """
         self.startingGameState: GameState = gameState
-        self.startState = (gameState.getPacmanPosition(), tuple(gameState.getFood().asList()))
+        self.startState = (gameState.getPacmanPosition(), tuple(gameState.getFood().asList()), tuple(gameState.getWalls().asList()))
         self.goalState = gameState.getFood().asList()
 
     @log_function
@@ -37,7 +37,7 @@ class q1c_problem:
     @log_function
     def isGoalState(self, state):
         "*** YOUR CODE HERE ***"
-        pacman_position, remaining_food = state
+        pacman_position, remaining_food, walls = state
         return len(remaining_food) == 0
 
     @log_function
@@ -53,7 +53,7 @@ class q1c_problem:
          cost of expanding to that successor
         """
         "*** YOUR CODE HERE ***"
-        pacman_position, remaining_food = state
+        pacman_position, remaining_food, walls = state
         successors = []
 
         x, y = pacman_position
@@ -67,6 +67,6 @@ class q1c_problem:
             
             action = direction
             step_cost = 1
-            successors.append(((next_position, next_food), action, step_cost))
+            successors.append(((next_position, next_food, walls), action, step_cost))
 
         return successors

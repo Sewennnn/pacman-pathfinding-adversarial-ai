@@ -79,22 +79,53 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
     return False, None
 
 def astar_heuristic(state, goals):
-    pacman_position, remaining_food = state
+    pacman_position, remaining_food, walls = state
     if not remaining_food:
         return 0
 
     # Example heuristic: sum of distances to all food points
-    return sum(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+    #return sum(util.manhattanDistance(pacman_position, food) for food in remaining_food)
 #     rows = len(set([f[0] for f in remaining_food]))  
 #     cols = len(set([f[1] for f in remaining_food]))  
 #     return rows + cols
+    nearest_food = min(remaining_food, key=lambda food: mazeDistance(pacman_position, food, walls))
+    farthest_food = max(remaining_food, key=lambda food: mazeDistance(pacman_position, food, walls))
+    
+    min_dist = mazeDistance(pacman_position, nearest_food, walls)
+    max_dist = mazeDistance(nearest_food, farthest_food, walls)
+    
+    return min_dist + max_dist
 
 
 
 # if len(state.getFood().asList()) > 0:
 #         return 1
 #     return 0
-    
-    
 
+
+def mazeDistance(start, goal, walls):
+    rows, cols = len(walls), len(walls[0])
+    queue = util.Queue()
+    queue.push(tuple(start))  # Use tuple for start
+    distances = {tuple(start): 0}  # Use tuple for distances key
+
+    while not queue.isEmpty():
+        current = tuple(queue.pop())  # Convert to tuple
+        current_distance = distances[current]
+
+        for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            next_position = (current[0] + direction[0], current[1] + direction[1])
+
+            if (0 <= next_position[0] < rows and 
+                0 <= next_position[1] < cols and 
+                not walls[next_position[0]][next_position[1]] and 
+                next_position not in distances):
+                
+                distances[next_position] = current_distance + 1
+                if next_position == goal:
+                    return distances[next_position]
+                
+                queue.push(next_position)
+    
+    return float('inf')  # Return infinity if no path is found
 
