@@ -80,11 +80,11 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(state, goals):
     pacman_position, remaining_food = state
+    if not remaining_food:
+        return 0
 
-    if len(remaining_food) > 0:
-        return 1
-    
-    return 0
+    # Example heuristic: sum of distances to all food points
+    return sum(util.manhattanDistance(pacman_position, food) for food in remaining_food)
 #     rows = len(set([f[0] for f in remaining_food]))  
 #     cols = len(set([f[1] for f in remaining_food]))  
 #     return rows + cols
