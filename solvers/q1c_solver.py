@@ -35,7 +35,7 @@ def astar_initialise(problem: q1c_problem):
     goalState = problem.goalState
     
     initial_cost = 0
-    initial_heuristic = astar_heuristic(start_state, goalState, problem.walls)
+    initial_heuristic = astar_heuristic(start_state, goalState)
     
     astarData.pqueue.push(start_state, (initial_heuristic, initial_cost))
     astarData.cost_so_far[start_state] = initial_cost  
@@ -70,7 +70,7 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
         
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
-            heuristic = astar_heuristic(successor, problem.goalState, problem.walls)
+            heuristic = astar_heuristic(successor, problem.goalState)
             priority = new_cost + heuristic 
             
             astarData.pqueue.push(successor, (priority, -new_cost))
@@ -78,22 +78,32 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
     
     return False, None
 
-def astar_heuristic(state, goals, walls):
+def astar_heuristic(state, goals):
     pacman_position, remaining_food = state
-    
+
     if not remaining_food:
         return 0
-    
+
+    total_distance = 0
+    current_position = pacman_position
+    remaining_food_list = list(remaining_food)
+
     # Utility function to calculate Manhattan distance
-    
-    # Step 1: Find the nearest food using Manhattan distance
-    min_dist = min(util.manhattanDistance(pacman_position, food) for food in remaining_food)
-    
-    # Step 2: Find the farthest food using Manhattan distance
-    max_dist = max(util.manhattanDistance(pacman_position, food) for food in remaining_food)
-    
-    # Heuristic calculation: min_dist + max_dist
-    return min_dist + max_dist
+    def manhattan_distance(pos1, pos2):
+        return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+
+    # While there is still food left
+    while remaining_food_list:
+        # Find the closest food to the current position
+        nearest_food = min(remaining_food_list, key=lambda food: manhattan_distance(current_position, food))
+        # Add the distance to the nearest food to the total distance
+        total_distance += manhattan_distance(current_position, nearest_food)
+        # Move Pac-Man to the nearest food's position
+        current_position = nearest_food
+        # Remove the food from the list as it is collected
+        remaining_food_list.remove(nearest_food)
+
+    return total_distance
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
