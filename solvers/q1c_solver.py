@@ -85,7 +85,9 @@ def astar_heuristic(state, goals, walls):
     
     # Use BFS to compute the shortest distance to any food item
     distances = [q1c_problem.bfs_distance(walls, pacman_position, food) for food in remaining_food]
-    return min(distances)
+    pacman_distance_to_food = [util.manhattanDistance(pacman_position, food) for food in remaining_food]
+
+    return max(distances) + min(pacman_distance_to_food)
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
