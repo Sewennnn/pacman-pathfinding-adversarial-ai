@@ -26,6 +26,10 @@ def scoreEvaluationFunction( currentGameState: GameState):
 
     score = currentGameState.getScore()
 
+    # Action penalty
+    score -= 1  # Penalize each action
+
+    # Food positions
     food_positions = food.asList()
     if food_positions:
         closest_food_dist = min([util.manhattanDistance(pacman_pos, food_pos) for food_pos in food_positions])
@@ -33,35 +37,43 @@ def scoreEvaluationFunction( currentGameState: GameState):
         score += 10.0 / closest_food_dist  
         score += 5.0 / farthest_food_dist  
 
-    score -= 4 * len(food_positions)  
+    # Penalize for remaining food
+    score -= 4 * len(food_positions)
 
+    # Capsules positions
     if capsules:
         closest_capsule_dist = min([util.manhattanDistance(pacman_pos, capsule) for capsule in capsules])
         score += 5.0 / closest_capsule_dist
 
+    # Ghost-related logic
     for ghost_state in ghost_states:
         ghost_pos = ghost_state.getPosition()
         ghost_dist = util.manhattanDistance(pacman_pos, ghost_pos)
-        if ghost_state.scaredTimer > 0:
-            score += 10.0 / ghost_dist
-        else:
-            if ghost_dist > 0:
-                score -= 20.0 / ghost_dist  
-    
-    if len(currentGameState.getLegalActions(0)) == 1 and currentGameState.getLegalActions(0)[0] == Directions.STOP:
-        score -= 10  
 
+        if ghost_state.scaredTimer > 0:
+            score += 200.0 / (ghost_dist + 1)  # Pac-Man actively seeks scared ghosts
+        else:
+            if ghost_dist < 2:  # Pac-Man is near an active ghost
+                score -= 1000.0 / (ghost_dist + 1)  # Strongly avoid ghosts
+            elif ghost_dist < 5:
+                score -= 100.0 / ghost_dist
+
+    # Check if Pac-Man is forced to stop
+    if len(currentGameState.getLegalActions(0)) == 1 and currentGameState.getLegalActions(0)[0] == Directions.STOP:
+        score -= 10  # Penalize stopping
+
+    # Win/Loss scenarios
     if currentGameState.isWin():
-        score += 1000  
+        score += 1000  # High reward for winning
     if currentGameState.isLose():
-        score -= 1000  
+        score -= 1000  # High penalty for losing
 
     return score
 
 
 class Q2_Agent(Agent):
 
-    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '4'):
+    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '3'):
         self.index = 0 # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
