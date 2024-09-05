@@ -38,7 +38,7 @@ def astar_initialise(problem: q1c_problem):
     initial_heuristic = astar_heuristic(start_state, goalState)
     
     astarData.pqueue.push(start_state, (initial_heuristic, initial_cost))
-    astarData.cost_so_far[start_state] = initial_cost  # No longer unhashable
+    astarData.cost_so_far[start_state] = initial_cost  
     astarData.came_from[start_state] = None
     
     return astarData
@@ -47,7 +47,7 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
     # YOUR CODE HERE
     
     if astarData.pqueue.isEmpty():
-        return True, None  # No solution if priority queue is empty
+        return True, None  
     
     current = astarData.pqueue.pop()
     
@@ -83,7 +83,7 @@ def astar_heuristic(state, goals):
     # if not remaining_food:
     #     return 0
 
-    # Example heuristic: sum of distances to all food points
+    
     #return sum(util.manhattanDistance(pacman_position, food) for food in remaining_food)
 #     rows = len(set([f[0] for f in remaining_food]))  
 #     cols = len(set([f[1] for f in remaining_food]))  
@@ -94,20 +94,23 @@ def astar_heuristic(state, goals):
     
     distances = [util.manhattanDistance(pacman_position, food) for food in remaining_food]
     
-    # # Calculate the maximum Manhattan distance between any two food items
-    # max_food_distance = 0
-    # for i in range(len(remaining_food)):
-    #     for j in range(i + 1, len(remaining_food)):
-    #         food1 = remaining_food[i]
-    #         food2 = remaining_food[j]
-    #         distance = util.manhattanDistance(food1, food2)
-    #         max_food_distance = max(max_food_distance, distance)
+   
+    max_food_distance = 0
+    for i in range(len(remaining_food)):
+        for j in range(i + 1, len(remaining_food)):
+            food1 = remaining_food[i]
+            food2 = remaining_food[j]
+            distance = util.manhattanDistance(food1, food2)
+            max_food_distance = max(max_food_distance, distance)
 
-    return min(distances) 
+    return min(distances) + max_food_distance
 
-    # Heuristic: Minimum distance to any food
+   
     # nearest_food = min(remaining_food, key=lambda food: mazeDistance(pacman_position, food, walls))
     # return mazeDistance(pacman_position, nearest_food, walls)
+
+
+
 
 
 
