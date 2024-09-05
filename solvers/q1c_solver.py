@@ -83,18 +83,12 @@ def astar_heuristic(state, goals, walls):
     if not remaining_food:
         return 0
     
-    # Calculate bounding box around remaining food
-    min_x = min(food[0] for food in remaining_food)
-    max_x = max(food[0] for food in remaining_food)
-    min_y = min(food[1] for food in remaining_food)
-    max_y = max(food[1] for food in remaining_food)
+    total_distance = 0
+    for food in remaining_food:
+        total_distance += abs(pacman_position[0] - food[0]) + abs(pacman_position[1] - food[1])
     
-    # Area of bounding box
-    area = (max_x - min_x + 1) * (max_y - min_y + 1)
-    
-    # Density as food items per unit area
-    density = len(remaining_food) / area
-    return density
+    avg_distance = total_distance / len(remaining_food)
+    return avg_distance
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
