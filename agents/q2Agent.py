@@ -99,11 +99,11 @@ class Q2_Agent(Agent):
                 _, score = self.minimax(next_depth, next_agent_index, next_game_state)
 
                 if agent_index == 0:  # Pacman's turn (Maximizing)
-                    if score > best_score:
+                    if score > best_score or (score == best_score and (best_action is None or action < best_action)):
                         best_score = score
                         best_action = action
                 else:  # Ghost's turn (Minimizing)
-                    if score < best_score:
+                    if score < best_score or (score == best_score and (best_action is None or action > best_action)):
                         best_score = score
                         best_action = action
 
