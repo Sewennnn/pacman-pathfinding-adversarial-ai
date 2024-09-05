@@ -80,35 +80,21 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(state, goals, walls):
     pacman_position, remaining_food = state
-    
     if not remaining_food:
         return 0
-
-    # Find nearest and farthest food using Manhattan distance
-    min_dist = float('inf')
-    max_dist = 0
-    nearest_food = None
-    farthest_food = None
-
-    for food in remaining_food:
-        dist = util.manhattanDistance(pacman_position, food)
-        if dist < min_dist:
-            min_dist = dist
-            nearest_food = food
-        if dist > max_dist:
-            max_dist = dist
-            farthest_food = food
     
-    if not nearest_food or not farthest_food:
-        return min_dist
-
-    # Compute the heuristic as the sum of the distances
-    heuristic_value = min_dist + util.manhattanDistance(nearest_food, farthest_food)* 1.5
-
-    # Optionally adjust for walls if a more sophisticated adjustment is needed
-    # Here you might add additional logic to refine the heuristic based on wall positions
-
-    return heuristic_value
+    # Calculate bounding box around remaining food
+    min_x = min(food[0] for food in remaining_food)
+    max_x = max(food[0] for food in remaining_food)
+    min_y = min(food[1] for food in remaining_food)
+    max_y = max(food[1] for food in remaining_food)
+    
+    # Area of bounding box
+    area = (max_x - min_x + 1) * (max_y - min_y + 1)
+    
+    # Density as food items per unit area
+    density = len(remaining_food) / area
+    return density
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
