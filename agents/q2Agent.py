@@ -46,6 +46,7 @@ class Q2_Agent(Agent):
         logger = logging.getLogger('root')
         logger.info('MinimaxAgent')
         "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
         # def alpha_beta_search(state, depth, alpha, beta, agentIndex):
         #     num_agents = state.getNumAgents()
             
