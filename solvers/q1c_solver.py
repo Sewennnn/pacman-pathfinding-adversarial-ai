@@ -79,6 +79,7 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
     return False, None
 
 def astar_heuristic(state, goals):
+    
     pacman_position, remaining_food = state
 
     if not remaining_food:
@@ -103,7 +104,7 @@ def astar_heuristic(state, goals):
         # Remove the food from the list as it is collected
         remaining_food_list.remove(nearest_food)
 
-    return total_distance
+    return total_distance 
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
