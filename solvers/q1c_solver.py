@@ -35,7 +35,7 @@ def astar_initialise(problem: q1c_problem):
     goalState = problem.goalState
     
     initial_cost = 0
-    initial_heuristic = astar_heuristic(start_state, goalState)
+    initial_heuristic = astar_heuristic(start_state, goalState, problem.walls)
     
     astarData.pqueue.push(start_state, (initial_heuristic, initial_cost))
     astarData.cost_so_far[start_state] = initial_cost  
@@ -70,7 +70,7 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
         
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
-            heuristic = astar_heuristic(successor, problem.goalState)
+            heuristic = astar_heuristic(successor, problem.goalState, problem.walls)
             priority = new_cost + heuristic 
             
             astarData.pqueue.push(successor, (priority, -new_cost))
@@ -78,9 +78,14 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
     
     return False, None
 
-def astar_heuristic(state, goals):
-    pacman_position, remaining_food, walls = state
-    return len(remaining_food)
+def astar_heuristic(state, goals, walls):
+    pacman_position, remaining_food = state
+    if not remaining_food:
+        return 0
+    
+    # Use BFS to compute the shortest distance to any food item
+    distances = [q1c_problem.bfs_distance(walls, pacman_position, food) for food in remaining_food]
+    return min(distances)
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
@@ -112,33 +117,7 @@ def astar_heuristic(state, goals):
     # return mazeDistance(pacman_position, nearest_food, walls)
 
 
-def find_real_distance(maze, start_position, goal_position):
-    
-    from util import Queue  # Ensure to import Queue from your util module
-    
-    # Initialize BFS queue and visited set
-    queue = Queue()
-    queue.push((start_position, 0))  # Queue should store tuples of (position, distance)
-    visited = set()
-    visited.add(start_position)  # Add start_position to visited
-    
-    while not queue.isEmpty():
-        current_position, distance = queue.pop()
-        
-        # If we reached the goal, return the distance
-        if current_position == goal_position:
-            return distance
-        
-        x, y = current_position
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            next_position = (x + dx, y + dy)
-            
-            if (0 <= next_position[0] < len(maze)) and (0 <= next_position[1] < len(maze[0])):
-                if not maze[next_position[0]][next_position[1]] and next_position not in visited:
-                    visited.add(next_position)
-                    queue.push((next_position, distance + 1))  # Store tuple in queue
-    
-    # If no path is found, return infinity (or some in
+
 
 
 

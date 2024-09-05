@@ -6,6 +6,8 @@ import util
 from game import Actions, Agent, Directions
 from logs.search_logger import log_function
 from pacman import GameState
+from util import Queue
+import numpy as np
 
 
 class q1c_problem:
@@ -26,9 +28,10 @@ class q1c_problem:
         goal: A position in the gameState
         """
         self.startingGameState: GameState = gameState
-        self.startState = (gameState.getPacmanPosition(), tuple(gameState.getFood().asList()), tuple(gameState.getWalls().asList()))
+        self.startState = (gameState.getPacmanPosition(), tuple(gameState.getFood().asList()))
         self.goalState = gameState.getFood().asList()
-        #self.walls = gameState
+        self.walls = gameState.getWalls().asList()
+        self.distance_matrix = q1c_problem.floyd_warshall(self.walls, gameState.getFood().asList())
 
     @log_function
     def getStartState(self):
@@ -38,7 +41,7 @@ class q1c_problem:
     @log_function
     def isGoalState(self, state):
         "*** YOUR CODE HERE ***"
-        pacman_position, remaining_food, walls = state
+        pacman_position, remaining_food = state
         return len(remaining_food) == 0
 
     @log_function
@@ -54,7 +57,7 @@ class q1c_problem:
          cost of expanding to that successor
         """
         "*** YOUR CODE HERE ***"
-        pacman_position, remaining_food, walls = state
+        pacman_position, remaining_food = state
         successors = []
 
         x, y = pacman_position
@@ -68,6 +71,56 @@ class q1c_problem:
             
             action = direction
             step_cost = 1
-            successors.append(((next_position, next_food, walls), action, step_cost))
+            successors.append(((next_position, next_food), action, step_cost))
 
         return successors
+    
+    
+    def bfs_distance(walls, start_position, goal_position):
+
+        queue = Queue()
+        queue.push((start_position, 0))
+        visited = set()
+        visited.add(start_position)
+        
+        while not queue.isEmpty():
+            current_position, distance = queue.pop()
+            
+            if current_position == goal_position:
+                return distance
+            
+            x, y = current_position
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                next_position = (x + dx, y + dy)
+                
+                if (0 <= next_position[0] < len(walls)) and (0 <= next_position[1] < len(walls[0])):
+                    if not walls[next_position[0]][next_position[1]] and next_position not in visited:
+                        visited.add(next_position)
+                        queue.push((next_position, distance + 1))
+        
+        return float('inf')
+    
+    
+    def floyd_warshall(walls, nodes):
+    
+        num_nodes = len(nodes)
+        dist = np.full((num_nodes, num_nodes), float('inf'))
+        
+        # Initialize distances
+        for i, node1 in enumerate(nodes):
+            for j, node2 in enumerate(nodes):
+                if node1 == node2:
+                    dist[i][j] = 0
+                else:
+                    dist[i][j] = q1c_problem.bfs_distance(walls, node1, node2)
+        
+        # Floyd-Warshall algorithm
+        for k in range(num_nodes):
+            for i in range(num_nodes):
+                for j in range(num_nodes):
+                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+        
+        return dist
+    
+
+    
