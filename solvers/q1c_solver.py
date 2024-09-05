@@ -94,16 +94,16 @@ def astar_heuristic(state, goals):
     
     distances = [util.manhattanDistance(pacman_position, food) for food in remaining_food]
     
-    # Calculate the maximum Manhattan distance between any two food items
-    max_food_distance = 0
-    for i in range(len(remaining_food)):
-        for j in range(i + 1, len(remaining_food)):
-            food1 = remaining_food[i]
-            food2 = remaining_food[j]
-            distance = util.manhattanDistance(food1, food2)
-            max_food_distance = max(max_food_distance, distance)
+    # # Calculate the maximum Manhattan distance between any two food items
+    # max_food_distance = 0
+    # for i in range(len(remaining_food)):
+    #     for j in range(i + 1, len(remaining_food)):
+    #         food1 = remaining_food[i]
+    #         food2 = remaining_food[j]
+    #         distance = util.manhattanDistance(food1, food2)
+    #         max_food_distance = max(max_food_distance, distance)
 
-    return min(distances) + max_food_distance
+    return min(distances) 
 
     # Heuristic: Minimum distance to any food
     # nearest_food = min(remaining_food, key=lambda food: mazeDistance(pacman_position, food, walls))
