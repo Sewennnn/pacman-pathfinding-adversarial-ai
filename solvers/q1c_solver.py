@@ -80,15 +80,16 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(state, goals, walls):
     pacman_position, remaining_food = state
+    
     if not remaining_food:
         return 0
     
-    total_distance = 0
-    for food in remaining_food:
-        total_distance += abs(pacman_position[0] - food[0]) + abs(pacman_position[1] - food[1])
+    # Step 1: Find the farthest food using Manhattan distance
+    farthest_food = max(remaining_food, key=lambda food: util.manhattanDistance(pacman_position, food))
+    max_dist = util.manhattanDistance(pacman_position, farthest_food)
     
-    avg_distance = total_distance / len(remaining_food)
-    return avg_distance
+    # Heuristic calculation
+    return max_dist
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
