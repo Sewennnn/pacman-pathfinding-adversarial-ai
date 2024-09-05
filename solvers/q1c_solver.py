@@ -71,7 +71,7 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
         if successor not in astarData.cost_so_far or new_cost < astarData.cost_so_far[successor]:
             astarData.cost_so_far[successor] = new_cost
             heuristic = astar_heuristic(successor, problem.goalState)
-            priority = new_cost + heuristic 
+            priority = new_cost + heuristic * 1.6
             
             astarData.pqueue.push(successor, (priority, -new_cost))
             astarData.came_from[successor] = current, action
