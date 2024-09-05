@@ -80,14 +80,35 @@ def astar_loop_body(problem: q1c_problem, astarData: AStarData):
 
 def astar_heuristic(state, goals, walls):
     pacman_position, remaining_food = state
+    
     if not remaining_food:
         return 0
-    
-    # Use BFS to compute the shortest distance to any food item
-    distances = [q1c_problem.bfs_distance(walls, pacman_position, food) for food in remaining_food]
-    pacman_distance_to_food = [util.manhattanDistance(pacman_position, food) for food in remaining_food]
 
-    return max(distances) + min(pacman_distance_to_food)
+    # Find nearest and farthest food using Manhattan distance
+    min_dist = float('inf')
+    max_dist = 0
+    nearest_food = None
+    farthest_food = None
+
+    for food in remaining_food:
+        dist = util.manhattanDistance(pacman_position, food)
+        if dist < min_dist:
+            min_dist = dist
+            nearest_food = food
+        if dist > max_dist:
+            max_dist = dist
+            farthest_food = food
+    
+    if not nearest_food or not farthest_food:
+        return min_dist
+
+    # Compute the heuristic as the sum of the distances
+    heuristic_value = min_dist + util.manhattanDistance(nearest_food, farthest_food)* 1.5
+
+    # Optionally adjust for walls if a more sophisticated adjustment is needed
+    # Here you might add additional logic to refine the heuristic based on wall positions
+
+    return heuristic_value
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
