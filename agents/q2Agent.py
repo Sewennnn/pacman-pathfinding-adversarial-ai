@@ -19,27 +19,42 @@ from util import manhattanDistance
 #     return currentGameState.getScore()
 
 def scoreEvaluationFunction( currentGameState: GameState):
-    pacmanPos = currentGameState.getPacmanPosition()
+    pacman_pos = currentGameState.getPacmanPosition()
     food = currentGameState.getFood()
-    ghostStates = currentGameState.getGhostStates()
-    scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
-
-  
-    foodList = food.asList()
-    if not foodList:
-        return float('inf') 
-
-    minFoodDist = min(manhattanDistance(pacmanPos, food) for food in foodList)
-    ghostDist = min(manhattanDistance(pacmanPos, ghost.getPosition()) for ghost in ghostStates)
+    ghost_states = currentGameState.getGhostStates()
+    capsules = currentGameState.getCapsules()
 
     score = currentGameState.getScore()
 
-    
-    if ghostDist <= 1:
-        score -= 1000
+    food_positions = food.asList()
+    if food_positions:
+        closest_food_dist = min([util.manhattanDistance(pacman_pos, food_pos) for food_pos in food_positions])
+        farthest_food_dist = max([util.manhattanDistance(pacman_pos, food_pos) for food_pos in food_positions])
+        score += 10.0 / closest_food_dist  
+        score += 5.0 / farthest_food_dist  
 
- 
-    score += 10 / (minFoodDist + 1)
+    score -= 4 * len(food_positions)  
+
+    if capsules:
+        closest_capsule_dist = min([util.manhattanDistance(pacman_pos, capsule) for capsule in capsules])
+        score += 5.0 / closest_capsule_dist
+
+    for ghost_state in ghost_states:
+        ghost_pos = ghost_state.getPosition()
+        ghost_dist = util.manhattanDistance(pacman_pos, ghost_pos)
+        if ghost_state.scaredTimer > 0:
+            score += 10.0 / ghost_dist
+        else:
+            if ghost_dist > 0:
+                score -= 20.0 / ghost_dist  
+    
+    if len(currentGameState.getLegalActions(0)) == 1 and currentGameState.getLegalActions(0)[0] == Directions.STOP:
+        score -= 10  
+
+    if currentGameState.isWin():
+        score += 1000  
+    if currentGameState.isLose():
+        score -= 1000  
 
     return score
 
@@ -99,11 +114,11 @@ class Q2_Agent(Agent):
                 _, score = self.minimax(next_depth, next_agent_index, next_game_state)
 
                 if agent_index == 0:  # Pacman's turn (Maximizing)
-                    if score > best_score or (score == best_score and (best_action is None or action < best_action)):
+                    if score > best_score:
                         best_score = score
                         best_action = action
                 else:  # Ghost's turn (Minimizing)
-                    if score < best_score or (score == best_score and (best_action is None or action > best_action)):
+                    if score < best_score:
                         best_score = score
                         best_action = action
 
