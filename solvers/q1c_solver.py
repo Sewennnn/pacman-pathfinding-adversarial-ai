@@ -96,7 +96,7 @@ def astar_heuristic(state, goals):
     for food in remaining_food :
         distances.append(util.manhattanDistance(pacman_position, food))
 
-    return min(distances)
+    return min(distances) + len(remaining_food) -1
 
     # Heuristic: Minimum distance to any food
     # nearest_food = min(remaining_food, key=lambda food: mazeDistance(pacman_position, food, walls))
