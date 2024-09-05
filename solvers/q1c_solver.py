@@ -84,12 +84,16 @@ def astar_heuristic(state, goals, walls):
     if not remaining_food:
         return 0
     
-    # Step 1: Find the farthest food using Manhattan distance
-    farthest_food = max(remaining_food, key=lambda food: util.manhattanDistance(pacman_position, food))
-    max_dist = util.manhattanDistance(pacman_position, farthest_food)
+    # Utility function to calculate Manhattan distance
     
-    # Heuristic calculation
-    return max_dist
+    # Step 1: Find the nearest food using Manhattan distance
+    min_dist = min(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+    
+    # Step 2: Find the farthest food using Manhattan distance
+    max_dist = max(util.manhattanDistance(pacman_position, food) for food in remaining_food)
+    
+    # Heuristic calculation: min_dist + max_dist
+    return min_dist + max_dist
     # pacman_position, remaining_food, walls = state
     # if not remaining_food:
     #     return 0
