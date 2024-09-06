@@ -32,7 +32,7 @@ class q1a_problem:
         self.startingGameState: GameState = gameState
         self.startState = gameState.getPacmanPosition()
         self.goalState = gameState.getFood().asList(True)[0]
-        print(self.goalState)
+    
         
 
     @log_function
@@ -74,7 +74,6 @@ class q1a_problem:
                 continue
             next_state = (next_x, next_y)
             action = direction
-            print("direction", direction)
             step_cost = 1
             successors.append((next_state, action, step_cost))
         return successors

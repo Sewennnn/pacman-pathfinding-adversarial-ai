@@ -19,37 +19,43 @@ from util import manhattanDistance
 #     return currentGameState.getScore()
 
 def scoreEvaluationFunction( currentGameState: GameState):
-    pacman_pos = currentGameState.getPacmanPosition()
-    food = currentGameState.getFood()
+    pacman_position = currentGameState.getPacmanPosition()
+    food_positions = currentGameState.getFood().asList()
     ghost_states = currentGameState.getGhostStates()
     capsules = currentGameState.getCapsules()
 
     score = currentGameState.getScore()
 
-    food_positions = food.asList()
+    
     if food_positions:
-        closest_food_dist = min([util.manhattanDistance(pacman_pos, food_pos) for food_pos in food_positions])
-        farthest_food_dist = max([util.manhattanDistance(pacman_pos, food_pos) for food_pos in food_positions])
-        score += 10.0 / closest_food_dist  
-        score += 5.0 / farthest_food_dist  
+        closest_food = min([util.manhattanDistance(pacman_position, food_position) for food_position in food_positions])
+        farthest_food = max([util.manhattanDistance(pacman_position, food_position) for food_position in food_positions])
+        score += 10.0 / closest_food  
+        score += 5.0 / farthest_food 
 
-    score -= 4 * len(food_positions)  
+        for food_position in food_positions:
+            if food_position[0] == pacman_position[0] or food_position[1] == pacman_position[1]:
+                score += 2 
+
+    #score -= 3 * len(food_positions)  
 
     if capsules:
-        closest_capsule_dist = min([util.manhattanDistance(pacman_pos, capsule) for capsule in capsules])
-        score += 5.0 / closest_capsule_dist
+        closest_capsule_distance = min([util.manhattanDistance(pacman_position, capsule) for capsule in capsules])
+        score += 15.0 / (closest_capsule_distance - 1)
+
+    score -= 5 * len(capsules)
 
     for ghost_state in ghost_states:
-        ghost_pos = ghost_state.getPosition()
-        ghost_dist = util.manhattanDistance(pacman_pos, ghost_pos)
+        ghost_position = ghost_state.getPosition()
+        ghost_distance = util.manhattanDistance(pacman_position, ghost_position)
         if ghost_state.scaredTimer > 0:
-            score += 10.0 / ghost_dist
+            score += 20.0 / (ghost_distance + 1)
         else:
-            if ghost_dist > 0:
-                score -= 20.0 / ghost_dist  
+            if ghost_distance > 0:
+                score -= 20.0 / (ghost_distance + 1)
     
     if len(currentGameState.getLegalActions(0)) == 1 and currentGameState.getLegalActions(0)[0] == Directions.STOP:
-        score -= 10  
+        score -= 20
 
     if currentGameState.isWin():
         score += 1000  
@@ -61,7 +67,7 @@ def scoreEvaluationFunction( currentGameState: GameState):
 
 class Q2_Agent(Agent):
 
-    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
+    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '3'):
         self.index = 0 # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
@@ -89,21 +95,26 @@ class Q2_Agent(Agent):
         logger.info('MinimaxAgent')
         "*** YOUR CODE HERE ***"
 
-            
-        action, _ = self.minimax(0, 0, gameState)  
-        return action 
-    
+        alpha = float('-inf')
+        beta = float('inf')
 
-    def minimax(self, curr_depth, agent_index, gameState):
-            num_agents = gameState.getNumAgents()
-            if curr_depth == self.depth or gameState.isWin() or gameState.isLose():
-                return None, self.evaluationFunction(gameState)
+        # Perform minimax with alpha-beta pruning
+        action, _ = self.alphaBetaMinimax(0, 0, gameState, alpha, beta)
+        return action
 
-            legal_actions = gameState.getLegalActions(agent_index)
-            if not legal_actions:
-                return None, self.evaluationFunction(gameState)
+    def alphaBetaMinimax(self, curr_depth, agent_index, gameState, alpha, beta):
+        num_agents = gameState.getNumAgents()
 
-            best_score = float('-inf') if agent_index == 0 else float('inf')
+        # Terminal state or max depth reached
+        if curr_depth == self.depth or gameState.isWin() or gameState.isLose():
+            return None, self.evaluationFunction(gameState)
+
+        legal_actions = gameState.getLegalActions(agent_index)
+        if not legal_actions:
+            return None, self.evaluationFunction(gameState)
+
+        if agent_index == 0:  # Pac-Man (maximizer)
+            best_score = float('-inf')
             best_action = None
 
             for action in legal_actions:
@@ -111,18 +122,75 @@ class Q2_Agent(Agent):
                 next_agent_index = (agent_index + 1) % num_agents
                 next_depth = curr_depth + 1 if next_agent_index == 0 else curr_depth
 
-                _, score = self.minimax(next_depth, next_agent_index, next_game_state)
+                _, score = self.alphaBetaMinimax(next_depth, next_agent_index, next_game_state, alpha, beta)
 
-                if agent_index == 0:  # Pacman's turn (Maximizing)
-                    if score > best_score:
-                        best_score = score
-                        best_action = action
-                else:  # Ghost's turn (Minimizing)
-                    if score < best_score:
-                        best_score = score
-                        best_action = action
+                if score > best_score:
+                    best_score = score
+                    best_action = action
+
+                alpha = max(alpha, best_score)
+                if beta <= alpha:
+                    break
 
             return best_action, best_score
+
+        else:  
+            best_score = float('inf')
+            best_action = None
+
+            for action in legal_actions:
+                next_game_state = gameState.generateSuccessor(agent_index, action)
+                next_agent_index = (agent_index + 1) % num_agents
+                next_depth = curr_depth + 1 if next_agent_index == 0 else curr_depth
+
+                _, score = self.alphaBetaMinimax(next_depth, next_agent_index, next_game_state, alpha, beta)
+
+                if score < best_score:
+                    best_score = score
+                    best_action = action
+
+               
+                beta = min(beta, best_score)
+                if beta <= alpha:
+                    break
+
+            return best_action, best_score
+
+
+            
+    #     action, _ = self.minimax(0, 0, gameState)  
+    #     return action 
+    
+
+    # def minimax(self, curr_depth, agent_index, gameState):
+    #         num_agents = gameState.getNumAgents()
+    #         if curr_depth == self.depth or gameState.isWin() or gameState.isLose():
+    #             return None, self.evaluationFunction(gameState)
+
+    #         legal_actions = gameState.getLegalActions(agent_index)
+    #         if not legal_actions:
+    #             return None, self.evaluationFunction(gameState)
+
+    #         best_score = float('-inf') if agent_index == 0 else float('inf')
+    #         best_action = None
+
+    #         for action in legal_actions:
+    #             next_game_state = gameState.generateSuccessor(agent_index, action)
+    #             next_agent_index = (agent_index + 1) % num_agents
+    #             next_depth = curr_depth + 1 if next_agent_index == 0 else curr_depth
+
+    #             _, score = self.minimax(next_depth, next_agent_index, next_game_state)
+
+    #             if agent_index == 0:  
+    #                 if score > best_score:
+    #                     best_score = score
+    #                     best_action = action
+    #             else: 
+    #                 if score < best_score:
+    #                     best_score = score
+    #                     best_action = action
+
+    #         return best_action, best_score
         
 
 

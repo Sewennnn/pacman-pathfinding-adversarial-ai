@@ -28,7 +28,7 @@ class q1b_problem:
         self.startingGameState: GameState = gameState
         self.startState = gameState.getPacmanPosition()
         self.goalStates = gameState.getFood().asList()
-        print("all food positions", self.goalStates)
+    
 
     @log_function
     def getStartState(self):
