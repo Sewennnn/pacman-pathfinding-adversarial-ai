@@ -20,9 +20,10 @@ from util import manhattanDistance
 
 def scoreEvaluationFunction( currentGameState: GameState):
     pacman_position = currentGameState.getPacmanPosition()
-    food_positions = currentGameState.getFood().asList()
+   
     ghost_states = currentGameState.getGhostStates()
     capsules = currentGameState.getCapsules()
+    food_positions = currentGameState.getFood().asList()
 
     score = currentGameState.getScore()
 
@@ -126,41 +127,4 @@ class Q2_Agent(Agent):
 
 
             
-    #     action, _ = self.minimax(0, 0, gameState)  
-    #     return action 
-    
-
-    # def minimax(self, curr_depth, agent_index, gameState):
-    #         num_agents = gameState.getNumAgents()
-    #         if curr_depth == self.depth or gameState.isWin() or gameState.isLose():
-    #             return None, self.evaluationFunction(gameState)
-
-    #         legal_actions = gameState.getLegalActions(agent_index)
-    #         if not legal_actions:
-    #             return None, self.evaluationFunction(gameState)
-
-    #         best_score = float('-inf') if agent_index == 0 else float('inf')
-    #         best_action = None
-
-    #         for action in legal_actions:
-    #             next_game_state = gameState.generateSuccessor(agent_index, action)
-    #             next_agent_index = (agent_index + 1) % num_agents
-    #             next_depth = curr_depth + 1 if next_agent_index == 0 else curr_depth
-
-    #             _, score = self.minimax(next_depth, next_agent_index, next_game_state)
-
-    #             if agent_index == 0:  
-    #                 if score > best_score:
-    #                     best_score = score
-    #                     best_action = action
-    #             else: 
-    #                 if score < best_score:
-    #                     best_score = score
-    #                     best_action = action
-
-    #         return best_action, best_score
-        
-
-
-        
-   
+    s
