@@ -110,6 +110,28 @@ class Q2_Agent(Agent):
         self.previous_positions.append(pacman_position)
         if len(self.previous_positions) > 5:
             self.previous_positions.pop(0)
+
+        if len(self.previous_positions) > 2 and self.previous_positions[0] == self.previous_positions[2]:
+            
+            ghosts = gameState.getGhostStates()
+            if ghosts:
+                ghost_positions = [ghost.getPosition() for ghost in ghosts]
+              
+                closest_ghost = min(ghost_positions, key=lambda g: util.manhattanDistance(pacman_position, g))
+         
+                legal_actions = gameState.getLegalActions(0)
+                best_action = None
+                best_distance = float('inf')
+                for action in legal_actions:
+                    successor = gameState.generateSuccessor(0, action)
+                    new_distance = util.manhattanDistance(successor.getPacmanPosition(), closest_ghost)
+                    if new_distance < best_distance:
+                        best_distance = new_distance
+                        best_action = action
+             
+                if best_action:
+                    return best_action
+    
         
         return action
     
