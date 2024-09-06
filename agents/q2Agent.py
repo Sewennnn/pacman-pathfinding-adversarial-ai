@@ -8,6 +8,8 @@ from pacman import GameState
 from util import manhattanDistance
 
 
+
+
 # def scoreEvaluationFunction(currentGameState):
 #     """
 #       This default evaluation function just returns the score of the state.
@@ -18,52 +20,55 @@ from util import manhattanDistance
 #     """
 #     return currentGameState.getScore()
 
-def scoreEvaluationFunction( currentGameState: GameState):
-    pacman_position = currentGameState.getPacmanPosition()
+# def scoreEvaluationFunction( currentGameState: GameState):
+#     pacman_position = currentGameState.getPacmanPosition()
    
-    ghost_states = currentGameState.getGhostStates()
-    capsules = currentGameState.getCapsules()
-    food_positions = currentGameState.getFood().asList()
+#     ghost_states = currentGameState.getGhostStates()
+#     capsules = currentGameState.getCapsules()
+#     food_positions = currentGameState.getFood().asList()
 
-    score = currentGameState.getScore()
+#     score = currentGameState.getScore()
 
     
-    if food_positions:
-        closest_food = min([util.manhattanDistance(pacman_position, food_position) for food_position in food_positions])
-        farthest_food = max([util.manhattanDistance(pacman_position, food_position) for food_position in food_positions])
-        score += 10.0 / closest_food  
-        score += 5.0 / farthest_food 
+#     if food_positions:
+#         closest_food = min([util.manhattanDistance(pacman_position, food_position) for food_position in food_positions])
+#         farthest_food = max([util.manhattanDistance(pacman_position, food_position) for food_position in food_positions])
+#         score += 10.0 / closest_food  
+#         score += 5.0 / farthest_food 
 
-        # for food_position in food_positions:
-        #     if food_position[0] == pacman_position[0] or food_position[1] == pacman_position[1]:
-        #         score * 10 
+#         # for food_position in food_positions:
+#         #     if food_position[0] == pacman_position[0] or food_position[1] == pacman_position[1]:
+#         #         score * 10 
 
-    #score -= 3 * len(food_positions)  
+#     #score -= 3 * len(food_positions)  
 
-    if capsules:
-        closest_capsule_distance = min([util.manhattanDistance(pacman_position, capsule) for capsule in capsules])
-        score -= 10 * (closest_capsule_distance )
+#     if capsules:
+#         closest_capsule_distance = min([util.manhattanDistance(pacman_position, capsule) for capsule in capsules])
+#         score -= 10 * (closest_capsule_distance )
 
-    #score -= 5 * len(capsules)
+#     #score -= 5 * len(capsules)
 
-    for ghost_state in ghost_states:
-        ghost_position = ghost_state.getPosition()
-        ghost_distance = util.manhattanDistance(pacman_position, ghost_position)
-        if ghost_state.scaredTimer > 0:
-            score += 20.0 / (ghost_distance + 1)
-        else:
-            if ghost_distance > 0:
-                score -= 20.0 / (ghost_distance + 1)
+#     for ghost_state in ghost_states:
+#         ghost_position = ghost_state.getPosition()
+#         ghost_distance = util.manhattanDistance(pacman_position, ghost_position)
+#         if ghost_state.scaredTimer > 0:
+#             score += 20.0 / (ghost_distance + 1)
+#         else:
+#             if ghost_distance > 0:
+#                 score -= 20.0 / (ghost_distance + 1)
     
-    if len(currentGameState.getLegalActions(0)) == 1 and currentGameState.getLegalActions(0)[0] == Directions.STOP:
-        score -= 20
+#     if len(currentGameState.getLegalActions(0)) == 1 and currentGameState.getLegalActions(0)[0] == Directions.STOP:
+#         score -= 20
 
-    if currentGameState.isWin():
-        score += 1000  
-    if currentGameState.isLose():
-        score -= 1000  
+#     if len(Q2_Agent.previous_positions) > 2 and pacman_position in Q2_Agent.previous_positions[-3:]:
+#         score -= 50 
 
-    return score
+#     if currentGameState.isWin():
+#         score += 1000  
+#     if currentGameState.isLose():
+#         score -= 1000  
+
+#     return score
 
 
 class Q2_Agent(Agent):
@@ -72,6 +77,8 @@ class Q2_Agent(Agent):
         self.index = 0 # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
+        self.previous_positions = []
+
 
     
     @log_function
@@ -96,16 +103,23 @@ class Q2_Agent(Agent):
         logger.info('MinimaxAgent')
         "*** YOUR CODE HERE ***"
 
-        action, _ = self.minimax(0, 0, gameState)  
-        return action 
+        action, _ = self.minimax(0, 0, gameState)
+        pacman_position = gameState.getPacmanPosition()
+        
+       
+        self.previous_positions.append(pacman_position)
+        if len(self.previous_positions) > 5:
+            self.previous_positions.pop(0)
+        
+        return action
     
     def minimax(self, curr_depth, agent_index, gameState):
             num_agents = gameState.getNumAgents()
             if curr_depth == self.depth or gameState.isWin() or gameState.isLose():
-                return None, self.evaluationFunction(gameState)
+                return None, self.evaluationFunction(gameState, self)
             legal_actions = gameState.getLegalActions(agent_index)
             if not legal_actions:
-                return None, self.evaluationFunction(gameState)
+                return None, self.evaluationFunction(gameState, self)
             best_score = float('-inf') if agent_index == 0 else float('inf')
             best_action = None
             for action in legal_actions:
@@ -122,9 +136,44 @@ class Q2_Agent(Agent):
                         best_score = score
                         best_action = action
             return best_action, best_score
+    
+
+def scoreEvaluationFunction(currentGameState: GameState, agent: Q2_Agent):
+    pacman_position = currentGameState.getPacmanPosition()
+    ghost_states = currentGameState.getGhostStates()
+    capsules = currentGameState.getCapsules()
+    food_positions = currentGameState.getFood().asList()
+    score = currentGameState.getScore()
+
+    if food_positions:
+        closest_food = min([util.manhattanDistance(pacman_position, food_position) for food_position in food_positions])
+        score += 10.0 / closest_food  
+
+    if capsules:
+        closest_capsule_distance = min([util.manhattanDistance(pacman_position, capsule) for capsule in capsules])
+        score -= 10 * closest_capsule_distance 
+
+    for ghost_state in ghost_states:
+        ghost_position = ghost_state.getPosition()
+        ghost_distance = util.manhattanDistance(pacman_position, ghost_position)
+        if ghost_state.scaredTimer > 0:
+            score += 20.0 / (ghost_distance + 1)
+        else:
+            if ghost_distance > 0:
+                score -= 20.0 / (ghost_distance + 1)
+
+    if len(agent.previous_positions) > 2 and pacman_position in agent.previous_positions[-3:]:
+        score -= 50 
+
+    if currentGameState.isWin():
+        score += 1000  
+    if currentGameState.isLose():
+        score -= 1000  
+
+    return score
         
 
 
 
             
-    s
+    
