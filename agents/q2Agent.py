@@ -35,7 +35,7 @@ def scoreEvaluationFunction( currentGameState: GameState):
 
         for food_position in food_positions:
             if food_position[0] == pacman_position[0] or food_position[1] == pacman_position[1]:
-                score * 2 
+                score * 7 
 
     #score -= 3 * len(food_positions)  
 
