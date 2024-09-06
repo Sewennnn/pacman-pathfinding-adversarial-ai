@@ -108,7 +108,7 @@ class Q2_Agent(Agent):
         
        
         self.previous_positions.append(pacman_position)
-        if len(self.previous_positions) > 5:
+        if len(self.previous_positions) > 3:
             self.previous_positions.pop(0)
 
         
