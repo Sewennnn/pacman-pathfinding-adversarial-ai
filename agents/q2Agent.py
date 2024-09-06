@@ -155,7 +155,7 @@ def scoreEvaluationFunction(currentGameState: GameState, agent: Q2_Agent):
 
     if capsules:
         closest_capsule_distance = min([util.manhattanDistance(pacman_position, capsule) for capsule in capsules])
-        score += 10 * closest_capsule_distance 
+        score += 10/ closest_capsule_distance 
 
 
     for ghost_state in ghost_states:
@@ -167,7 +167,7 @@ def scoreEvaluationFunction(currentGameState: GameState, agent: Q2_Agent):
             if ghost_distance > 0:
                 score -= 10.0 / (ghost_distance + 1)
 
-    score -= 4 * len(food_positions)
+    score -= 3 * len(food_positions)
 
     if len(agent.previous_positions) > 2 and pacman_position in agent.previous_positions[-3:]:
         score -= 50 
