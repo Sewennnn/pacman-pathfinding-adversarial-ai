@@ -33,9 +33,9 @@ def scoreEvaluationFunction( currentGameState: GameState):
         score += 10.0 / closest_food  
         score += 5.0 / farthest_food 
 
-        for food_position in food_positions:
-            if food_position[0] == pacman_position[0] or food_position[1] == pacman_position[1]:
-                score * 7 
+        # for food_position in food_positions:
+        #     if food_position[0] == pacman_position[0] or food_position[1] == pacman_position[1]:
+        #         score * 10 
 
     #score -= 3 * len(food_positions)  
 
@@ -43,16 +43,16 @@ def scoreEvaluationFunction( currentGameState: GameState):
         closest_capsule_distance = min([util.manhattanDistance(pacman_position, capsule) for capsule in capsules])
         score -= 10 * (closest_capsule_distance )
 
-    score -= 5 * len(capsules)
+    #score -= 5 * len(capsules)
 
     for ghost_state in ghost_states:
         ghost_position = ghost_state.getPosition()
         ghost_distance = util.manhattanDistance(pacman_position, ghost_position)
         if ghost_state.scaredTimer > 0:
-            score += 20.0 / (ghost_distance)
+            score += 20.0 / (ghost_distance + 1)
         else:
             if ghost_distance > 0:
-                score -= 20.0 / (ghost_distance)
+                score -= 20.0 / (ghost_distance + 1)
     
     if len(currentGameState.getLegalActions(0)) == 1 and currentGameState.getLegalActions(0)[0] == Directions.STOP:
         score -= 20
