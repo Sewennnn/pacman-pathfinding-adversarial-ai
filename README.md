@@ -1,19 +1,42 @@
-# Assignment 1
+Pac-Man Search & Adversarial AI
 
-This is your personal Git repository for assignment 1. It contains all the code you need.
+This project implements AI agents to solve variations of the Pac-Man game using classical search and adversarial algorithms.
 
-Please only edit the following files:
+## 🚀 Features
 
-- `agents/q2Agent.py`
-- `problems/q1a_problem.py`
-- `problems/q1b_problem.py`
-- `problems/q1c_problem.py`
-- `solvers/q1a_solver.py`
-- `solvers/q1b_solver.py`
-- `solvers/q1c_solver.py`
+- A* Search with Manhattan heuristic
+- Multi-goal search with custom heuristics
+- Optimized dot-collection strategies
+- Adversarial search using Alpha-Beta pruning
+- Performance-focused implementations (time & node expansion constraints)
 
-Other files will not be seen in the automatic grading system.
+## 🧠 Algorithms Used
 
-To use Git, you can use the `git` command in the terminal or [SourceTree](https://www.sourcetreeapp.com/) if you prefer a GUI. Once ready for grading, push your code to your BitBucket repo and click the Evaluate My Code button in the grading portal. The grading system will pull your code from this BitBucket repo and run the evaluation.
+- A* Search
+- Heuristic Design
+- Greedy / Optimized Search Strategies
+- Minimax with Alpha-Beta Pruning
 
-This repository is originally cloned from the `assignment1` branch of the repository at <https://github.com/ethantwills/fit3080_2024>. If there are updates to this code, please merge from here.
+## 🎮 Environment
+
+Built on the UC Berkeley Pac-Man AI framework.
+
+## 📊 Highlights
+
+- Optimized pathfinding for single and multiple goals
+- Reduced node expansions vs baseline
+- Strategic decision-making in adversarial environments
+
+## 🛠 Tech Stack
+
+- Python
+- NumPy
+
+## ▶️ How to Run
+
+```bash
+python pacman.py -l layouts/q1a_tinyMaze.lay -p SearchAgent -a fn=q1a_solver
+
+📌 Notes
+
+This project was originally developed as part of an AI coursework assignment and has been refined for portfolio purposes.
