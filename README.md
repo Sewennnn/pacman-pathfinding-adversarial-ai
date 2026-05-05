@@ -36,6 +36,7 @@ Built on the UC Berkeley Pac-Man AI framework.
 
 ```bash
 python pacman.py -l layouts/q1a_tinyMaze.lay -p SearchAgent -a fn=q1a_solver
+```
 
 📌 Notes
 
